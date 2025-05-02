@@ -1,0 +1,1 @@
+worker: python facecar_bot_env.py
