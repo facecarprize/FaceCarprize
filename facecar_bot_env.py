@@ -1,23 +1,41 @@
-# facecar_bot_env.py
+
 import telebot
-import random
 import os
-from dotenv import load_dotenv
+import random
+import time
 
-from facecar_phrases_REAL_FULL_900 import STARTERS, MIDDLES, ENDINGS
+TOKEN = os.getenv("TELEGRAM_TOKEN")
+bot = telebot.TeleBot(TOKEN)
 
-load_dotenv()
-API_TOKEN = os.getenv("TELEGRAM_TOKEN")
-bot = telebot.TeleBot(API_TOKEN)
+STARTERS = [
+    "Очередной день — очередной салон в труху.",
+    "Смотрим на этот потолок и понимаем: это будет надолго.",
+    "Утро началось с химчистки, и, походу, это надолго.",
+]
 
-@bot.message_handler(commands=['start', 'help'])
-def send_welcome(message):
-    bot.send_message(message.chat.id, "Привет! Я FaceCar-бот. Напиши /пост — получишь готовый текст.")
+MIDDLES = [
+    "Такой срач, будто тут ночевал табор.",
+    "Ковры — как асфальт после зимы: всё в крошку и грязи.",
+    "Запах в салоне такой, что даже мойка боится включаться.",
+]
 
-@bot.message_handler(commands=['пост'])
-def generate_post(message):
+ENDINGS = [
+    "Но ничего, вытащим, сделаем, будет как с витрины.",
+    "Уже в процессе — скоро покажем результат.",
+    "На связи FaceCar — спасаем интерьер с нуля.",
+]
+
+@bot.message_handler(commands=['start'])
+def start_message(message):
+    bot.send_message(message.chat.id, 'Привет! Я FaceCar-бот. Напиши /post — получишь готовый текст.')
+
+@bot.message_handler(commands=['post'])
+def send_post(message):
     post = f"{random.choice(STARTERS)} {random.choice(MIDDLES)} {random.choice(ENDINGS)}"
     bot.send_message(message.chat.id, post)
 
-if __name__ == "__main__":
-    bot.polling(none_stop=True)
+while True:
+    try:
+        bot.polling(none_stop=True)
+    except Exception as e:
+        time.sleep(5)
